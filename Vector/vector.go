@@ -107,3 +107,16 @@ func (v *vector) delete_position(idx int) int {
 	v.size--
 	return deleted
 }
+
+func (v *vector) improved_search(num int) int {
+	for i := 0; i < v.size; i++ {
+		if v.arr[i] == num {
+			temp := v.arr[i-1]
+			v.arr[i-1] = v.arr[i]
+			v.arr[i] = temp
+			return i
+
+		}
+	}
+	return -1
+}
