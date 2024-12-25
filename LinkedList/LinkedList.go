@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type node struct {
 	num  int
@@ -65,10 +67,10 @@ func (L *LinkedList) insert_front(num int) {
 
 // O(n)
 func (L *LinkedList) Print() {
-	temp := L.head
-	for temp != nil {
-		fmt.Println(temp.num)
-		temp = temp.next
+	tail := L.head
+	for tail != nil {
+		fmt.Println(tail.num)
+		tail = tail.next
 	}
 
 }
@@ -81,9 +83,9 @@ func (L *LinkedList) PrintRev(Node *node) {
 // O(n)
 func (L *LinkedList) PrintReverse() {
 
-	temp := L.head
-	if temp != nil {
-		L.PrintRev(temp)
+	tail := L.head
+	if tail != nil {
+		L.PrintRev(tail)
 	}
 
 }
@@ -109,13 +111,13 @@ func (L *LinkedList) getNthFromBack(n int) int {
 
 	itr := L.lenght - n
 
-	temp := L.head
+	tail := L.head
 	for i := 0; i < itr; i++ {
-		temp = temp.next
+		tail = tail.next
 
 	}
 
-	return temp.num
+	return tail.num
 }
 
 func (L *LinkedList) delteWithKey(n int) {
@@ -130,11 +132,11 @@ func (L *LinkedList) delteWithKey(n int) {
 		return
 	}
 
-	temp := L.head
-	for temp != nil {
-		if temp.next.num == n {
+	tail := L.head
+	for tail != nil {
+		if tail.next.num == n {
 
-			temp.next = temp.next.next
+			tail.next = tail.next.next
 			L.lenght--
 
 			break
@@ -146,12 +148,12 @@ func (L *LinkedList) delteWithKey(n int) {
 func (L *LinkedList) swapHeadTail() {
 	L.tail.next = L.head.next
 	L.head.next = nil
-	temp := L.tail
-	for temp.next != L.tail {
-		temp = temp.next
+	tail := L.tail
+	for tail.next != L.tail {
+		tail = tail.next
 	}
 
-	temp.next = L.head
+	tail.next = L.head
 
 	dummy := L.head
 	L.head = L.tail
@@ -160,15 +162,15 @@ func (L *LinkedList) swapHeadTail() {
 
 func (L *LinkedList) removeDuplic() {
 	freq := make(map[int]int)
-	temp := L.head
-	freq[temp.num]++
-	for temp != nil {
+	tail := L.head
+	freq[tail.num]++
+	for tail != nil {
 
-		freq[temp.next.num]++
-		if freq[temp.next.num] > 1 {
-			temp.next = temp.next.next
+		freq[tail.next.num]++
+		if freq[tail.next.num] > 1 {
+			tail.next = tail.next.next
 		}
-		temp = temp.next
+		tail = tail.next
 
 	}
 
@@ -179,14 +181,154 @@ func (L *LinkedList) moveToBack(num int) {
 	if L.head.num == num {
 		L.swapHeadTail()
 	}
-	temp := L.head
+	tail := L.head
 	for i := 0; i < L.lenght-1; i++ {
-		if temp.next.num == num {
-			L.tail.next = temp.next
-			temp.next = temp.next.next
+		if tail.next.num == num {
+			L.tail.next = tail.next
+			tail.next = tail.next.next
 			L.tail = L.tail.next
 			L.tail.next = nil
 		}
-		temp = temp.next
+		tail = tail.next
 	}
 }
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func addTwoNumbers(L1 *ListNode, L2 *ListNode, rest int) *ListNode {
+	if L1 == nil && L2 == nil {
+		if rest != 0 {
+			return &ListNode{1, nil}
+		}
+		return nil
+	}
+
+	if L1 != nil && L2 != nil {
+		sum := L1.Val + L2.Val + rest
+		rest = 0
+		if sum > 9 {
+			rest = 1
+			node := &ListNode{sum - 10, nil}
+			node.Next = addTwoNumbers(L1.Next, L2.Next, rest)
+			return node
+		} else {
+			node := &ListNode{sum, nil}
+			node.Next = addTwoNumbers(L1.Next, L2.Next, rest)
+			return node
+		}
+	}
+
+	if L1 != nil && L2 == nil {
+		sum := L1.Val + rest
+		rest = 0
+		if sum > 9 {
+			rest = 1
+			node := &ListNode{sum - 10, nil}
+			node.Next = addTwoNumbers(L1.Next, nil, rest)
+			return node
+		} else {
+			node := &ListNode{sum, nil}
+			node.Next = addTwoNumbers(L1.Next, nil, rest)
+			return node
+		}
+	}
+
+	if L1 == nil && L2 != nil {
+		sum := L2.Val + rest
+		rest = 0
+		if sum > 9 {
+			rest = 1
+			node := &ListNode{sum - 10, nil}
+			node.Next = addTwoNumbers(nil, L2.Next, rest)
+			return node
+		} else {
+			node := &ListNode{sum, nil}
+			node.Next = addTwoNumbers(nil, L2.Next, rest)
+			return node
+		}
+	}
+
+	return nil
+}
+
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+func deleteDuplicates(head *ListNode) *ListNode {
+	if head == nil {
+		return head
+	}
+
+	lastClean := head
+	curr := head
+	for curr != nil && curr.Next != nil {
+		if curr.Val == curr.Next.Val {
+			if curr == head {
+
+				val := curr.Val
+				for curr != nil {
+					if curr.Val != val {
+						break
+					}
+					curr = curr.Next
+				}
+				head = curr
+
+			} else {
+				val := curr.Val
+				for curr != nil {
+					if curr.Val != val {
+						break
+					}
+					curr = curr.Next
+				}
+
+				lastClean.Next = curr
+			}
+
+		} else {
+
+			lastClean = curr
+			curr = curr.Next
+		}
+	}
+
+	return head
+}
+
+// func main() {
+//
+// 	head := ListNode{1, nil}
+// 	two := ListNode{2, nil}
+// 	three := ListNode{3, nil}
+// 	four := ListNode{3, nil}
+// 	five := ListNode{4, nil}
+// 	six := ListNode{4, nil}
+// 	seven := ListNode{5, nil}
+// 	head.Next = &two
+// 	two.Next = &three
+// 	three.Next = &four
+// 	four.Next = &five
+// 	five.Next = &six
+// 	six.Next = &seven
+// 	res := deleteDuplicates(&head)
+// 	for res != nil {
+// 		fmt.Println(res.Val)
+// 		res = res.Next
+// 	}
+//
+// }
