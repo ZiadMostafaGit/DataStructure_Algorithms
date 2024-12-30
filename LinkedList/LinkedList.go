@@ -310,25 +310,100 @@ func deleteDuplicates(head *ListNode) *ListNode {
 	return head
 }
 
-// func main() {
-//
-// 	head := ListNode{1, nil}
-// 	two := ListNode{2, nil}
-// 	three := ListNode{3, nil}
-// 	four := ListNode{3, nil}
-// 	five := ListNode{4, nil}
-// 	six := ListNode{4, nil}
-// 	seven := ListNode{5, nil}
-// 	head.Next = &two
-// 	two.Next = &three
-// 	three.Next = &four
-// 	four.Next = &five
-// 	five.Next = &six
-// 	six.Next = &seven
-// 	res := deleteDuplicates(&head)
-// 	for res != nil {
-// 		fmt.Println(res.Val)
-// 		res = res.Next
-// 	}
-//
-// }
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+func reverseKGroup(head *ListNode, k int) *ListNode {
+
+	// res := solve(head, k)
+
+	// return res
+	return head
+
+}
+
+func test(head *ListNode, k int) *ListNode {
+
+	if k == 1 {
+		return head
+	}
+	k--
+	newnode := test(head.Next, k)
+	temp := head.Next.Next
+
+	head.Next.Next = head
+	head.Next = temp
+
+	return newnode
+}
+func solve(head *ListNode, k int) *ListNode {
+
+	if head == nil || head.Next == nil {
+		return head
+	}
+	test1 := head
+	length := 0
+	for test1 != nil {
+
+		length++
+		test1 = test1.Next
+
+	}
+
+	length = length / k
+
+	temp := head
+
+	temp = test(temp, k)
+	head = temp
+	for i := 0; i < length-1; i++ {
+
+		for j := 0; j < k-1; j++ {
+			temp = temp.Next
+		}
+		temp.Next = test(temp.Next, k)
+		temp = temp.Next
+	}
+
+	return head
+
+}
+
+// Helper function to create a linked list from a slice.
+func createLinkedList(nums []int) *ListNode {
+	if len(nums) == 0 {
+		return nil
+	}
+	head := &ListNode{Val: nums[0]}
+	curr := head
+	for _, num := range nums[1:] {
+		curr.Next = &ListNode{Val: num}
+		curr = curr.Next
+	}
+	return head
+}
+func printLinkedList(head *ListNode) {
+	for head != nil {
+		fmt.Printf("%d ", head.Val)
+		head = head.Next
+	}
+	fmt.Println()
+}
+func main() {
+
+	// Test case: [1, 2, 3, 3, 4, 4, 5]
+	input := []int{1, 2, 3, 4, 5, 6}
+	fmt.Println("Input:", input)
+
+	// Create linked list from input.
+	head := createLinkedList(input)
+
+	// res := test(head, 2)
+	res := solve(head, 3)
+	printLinkedList(res)
+
+}
