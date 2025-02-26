@@ -1,10 +1,12 @@
 use std::cell::RefCell;
+
 use std::error::Error;
 use std::fmt::Display;
 use std::rc::Rc;
 
 struct Node<T> {
     data: T,
+
     prev: Option<Rc<RefCell<Node<T>>>>,
 }
 
@@ -19,11 +21,15 @@ impl<T> Node<T> {
 
 struct StackLinked<T: Display> {
     head: Option<Rc<RefCell<Node<T>>>>,
+    size: u32,
 }
 
 impl<T: Display> StackLinked<T> {
     fn new() -> Self {
-        StackLinked { head: None }
+        StackLinked {
+            head: None,
+            size: 0,
+        }
     }
 
     fn push(&mut self, the_data: T) {
@@ -38,6 +44,7 @@ impl<T: Display> StackLinked<T> {
                 self.head = Some(new_node);
             }
         }
+        self.size += 1;
     }
 
     fn pop(&mut self) -> Result<T, &'static str> {
@@ -46,6 +53,7 @@ impl<T: Display> StackLinked<T> {
         } else {
             let old_head = self.head.take().unwrap().clone();
             self.head = old_head.borrow().prev.clone();
+            self.size -= 1;
             Ok(Rc::try_unwrap(old_head).ok().unwrap().into_inner().data)
         }
     }
@@ -66,8 +74,18 @@ impl<T: Display> StackLinked<T> {
         T: Clone,
     {
         let mut current = self.head.clone();
+        let mut mid = 0;
+        if self.size >= 2 {
+            mid = self.size / 2;
+        }
+        let mut index = 0;
         while let Some(node) = current.clone().as_ref() {
-            print!("{} ", node.borrow().data.clone());
+            if index == mid {
+                print!("[{}] ", node.borrow().data.clone());
+            } else {
+                print!("{} ", node.borrow().data.clone());
+            }
+            index += 1;
             current = node.borrow().prev.clone();
         }
         println!();
@@ -117,9 +135,11 @@ fn from_infix_to_postfix(input: String) -> Result<String, &'static str> {
     let mut stack: StackLinked<char> = StackLinked::new();
     let mut output = String::new();
     for the_char in input.chars() {
-        if the_char.is_digit(10) {
+        if the_char.is_digit(10) || the_char.is_lowercase() || the_char.is_uppercase() {
             output.push(the_char);
         } else if the_char == '(' {
+            stack.push(the_char);
+        } else if the_char == '^' {
             stack.push(the_char);
         } else if the_char == ')' {
             while let Ok(poped) = stack.pop() {
@@ -172,13 +192,19 @@ fn from_infix_to_postfix(input: String) -> Result<String, &'static str> {
 fn main() {
     let mut stack = StackLinked::new();
     stack.push(1);
+    stack.print();
     stack.push(2);
+    stack.print();
     stack.push(3);
+    stack.print();
     stack.push(4);
+    stack.print();
     stack.push(5);
+    stack.print();
     stack.push(6);
+    stack.print();
     stack.push(7);
-    // stack.print();
+    stack.print();
     // let poped = stack.pop();
     // match poped {
     //     Ok(val) => println!("the value poped form stack is {}", val),
@@ -202,33 +228,38 @@ fn main() {
     //
     // stack.print();
 
-    let input1 = String::from("((2+3)*4-(7-5))*(6+3)");
-    if let Ok(output1) = from_infix_to_postfix(input1) {
-        println!("{}", output1);
-    }
-
-    let input2 = String::from("5-9/(3*4/2)");
-    if let Ok(output2) = from_infix_to_postfix(input2) {
-        println!("{}", output2);
-    }
-
-    let input3 = String::from("(1+2)*(6-4)");
-    if let Ok(output3) = from_infix_to_postfix(input3) {
-        println!("{}", output3);
-    }
-
-    let input4 = String::from("1+2*3-4");
-    if let Ok(output4) = from_infix_to_postfix(input4) {
-        println!("{}", output4);
-    }
-
-    let input5 = String::from("1+2*3");
-    if let Ok(output5) = from_infix_to_postfix(input5) {
-        println!("{}", output5);
-    }
-
-    let input5 = String::from("2+(3*(4-5*2)*(9/3+6))");
-    if let Ok(output5) = from_infix_to_postfix(input5) {
-        println!("{}", output5);
-    }
+    // let input1 = String::from("((2+3)*4-(7-5))*(6+3)");
+    // if let Ok(output1) = from_infix_to_postfix(input1) {
+    //     println!("{}", output1);
+    // }
+    //
+    // let input2 = String::from("5-9/(3*4/2)");
+    // if let Ok(output2) = from_infix_to_postfix(input2) {
+    //     println!("{}", output2);
+    // }
+    //
+    // let input3 = String::from("(1+2)*(6-4)");
+    // if let Ok(output3) = from_infix_to_postfix(input3) {
+    //     println!("{}", output3);
+    // }
+    //
+    // let input4 = String::from("1+2*3-4");
+    // if let Ok(output4) = from_infix_to_postfix(input4) {
+    //     println!("{}", output4);
+    // }
+    //
+    // let input5 = String::from("1+2*3");
+    // if let Ok(output5) = from_infix_to_postfix(input5) {
+    //     println!("{}", output5);
+    // }
+    //
+    // let input5 = String::from("2+(3*(4-5*2)*(9/3+6))");
+    // if let Ok(output5) = from_infix_to_postfix(input5) {
+    //     println!("{}", output5);
+    // }
+    //
+    // let input5 = String::from("a+b*(c^d-e)^(f+G*h)-i");
+    // if let Ok(output5) = from_infix_to_postfix(input5) {
+    //     println!("{}", output5);
+    // }
 }
