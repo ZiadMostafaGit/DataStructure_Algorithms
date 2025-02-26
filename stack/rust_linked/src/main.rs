@@ -1,5 +1,4 @@
 use std::cell::RefCell;
-
 use std::error::Error;
 use std::fmt::Display;
 use std::rc::Rc;
@@ -189,22 +188,68 @@ fn from_infix_to_postfix(input: String) -> Result<String, &'static str> {
     Ok(output)
 }
 
+fn asteroid_collision(astro: &mut Vec<i32>) -> Vec<i32> {
+    let mut res: Vec<i32> = Vec::with_capacity(astro.len());
+    let mut stack: StackLinked<i32> = StackLinked::new();
+    for val in astro.iter() {
+        if stack.head.is_none() {
+            stack.push(*val);
+            continue;
+        }
+
+        if let Ok(peek) = stack.peek() {
+            if peek > 0 && *val < 0 {
+                loop {
+                    if let Ok(peek) = stack.peek() {
+                        if peek.abs() > val.abs() {
+                            break;
+                        } else if peek.abs() < val.abs() {
+                            let _poped = stack.pop();
+                        } else if peek.abs() == val.abs() {
+                            let _poped = stack.pop();
+                            break;
+                        }
+                    } else {
+                        stack.push(*val);
+                        break;
+                    }
+                }
+            } else {
+                stack.push(*val);
+            }
+        }
+    }
+
+    while let Ok(poped) = stack.pop() {
+        res.push(poped);
+    }
+
+    res.reverse();
+    res
+}
+
 fn main() {
-    let mut stack = StackLinked::new();
-    stack.push(1);
-    stack.print();
-    stack.push(2);
-    stack.print();
-    stack.push(3);
-    stack.print();
-    stack.push(4);
-    stack.print();
-    stack.push(5);
-    stack.print();
-    stack.push(6);
-    stack.print();
-    stack.push(7);
-    stack.print();
+    // let mut stack = StackLinked::new();
+    let mut arr: Vec<i32> = vec![5, 10, -5];
+    let new_arr = asteroid_collision(&mut arr);
+    for item in new_arr.iter() {
+        print!("{} ", *item);
+    }
+    println!();
+    // stack.push(1);
+    // stack.print();
+    // stack.push(2);
+    // stack.print();
+    // stack.push(3);
+    // stack.print();
+    // stack.push(4);
+    // stack.print();
+    // stack.push(5);
+    // stack.print();
+    // stack.push(6);
+    // stack.print();
+    // stack.push(7);
+    // stack.print();
     // let poped = stack.pop();
     // match poped {
     //     Ok(val) => println!("the value poped form stack is {}", val),
