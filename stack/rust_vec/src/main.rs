@@ -2,20 +2,24 @@ use std::fmt::Display;
 
 struct Stack<T> {
     data: Vec<T>,
+    size: u32,
 }
 
 impl<T> Stack<T> {
     fn new(capacity: usize) -> Self {
         Stack {
             data: Vec::with_capacity(capacity),
+            size: 0,
         }
     }
 
     fn push(&mut self, val: T) {
         self.data.push(val);
+        self.size += 1;
     }
 
     fn pop(&mut self) -> Option<T> {
+        self.size -= 1;
         self.data.pop()
     }
 
@@ -35,6 +39,14 @@ impl<T> Stack<T> {
             print!("{} ", item);
         }
         println!();
+    }
+
+    fn instert_at_bottom(&mut self, val: T)
+    where
+        T: Copy,
+    {
+        self.data.insert(0, val);
+        self.size += 1;
     }
 }
 
@@ -142,10 +154,11 @@ fn main() {
     stack.push(4);
     stack.push(5);
     stack.print();
+    stack.instert_at_bottom(6);
+    stack.print();
+    // println!("{}", valid_parentheses("(()")); // false
 
-    println!("{}", valid_parentheses("(()")); // false
-
-    let mut text = String::from("hello world");
-    reverse_sub_words(&mut text);
-    println!("{}", text); // "olleh dlrow"
+    // let mut text = String::from("hello world");
+    // reverse_sub_words(&mut text);
+    // println!("{}", text); // "olleh dlrow"
 }
