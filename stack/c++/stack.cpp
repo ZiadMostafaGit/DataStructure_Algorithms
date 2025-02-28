@@ -34,12 +34,12 @@ template <typename T> void stack<T>::resize() {
   arr = move(new_arr);
 }
 
-template <typename T> void stack<T>::pop() {
+template <typename T> T stack<T>::pop() {
   if (is_empty()) {
     cout << "the stack is empty...!\n";
-    return;
+    return 0;
   }
-  top--;
+  return arr[top--];
 }
 
 template <typename T> int stack<T>::pick() {
@@ -169,15 +169,17 @@ vector<int> stack<T>::Asteroid_Collision(vector<int> &asteroids) {
   return stack;
 }
 template <typename T> int stack<T>::Score_of_Parentheses(string s) {
+
+  stack<int> stack(10);
   int score = 0;
   for (char c : s) {
     if (c == '(') {
-      push(score);
+      stack.push(score);
       score = 0;
     } else {
-      score = max(2 * score, 1) + pick();
-      pop();
+      score = stack.pop() + max(1, score * 2);
     }
   }
+  stack.printfront();
   return score;
 }

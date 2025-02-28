@@ -13,7 +13,7 @@ private:
 public:
   stack(int sz);
   void push(T val);
-  void pop();
+  T pop();
   int get_top();
   int pick();
   void resize();

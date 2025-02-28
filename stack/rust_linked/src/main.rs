@@ -228,14 +228,30 @@ fn asteroid_collision(astro: &mut Vec<i32>) -> Vec<i32> {
     res
 }
 
+fn score_of_parentheses(s: String) -> i32 {
+    let mut stack: Vec<i32> = Vec::new();
+    let mut score = 0;
+    for c in s.chars() {
+        if c == '(' {
+            stack.push(score);
+            score = 0;
+        } else {
+            if let Some(poped) = stack.pop() {
+                score = poped + std::cmp::max(1, score * 2);
+            }
+        }
+    }
+    score
+}
+
 fn main() {
     // let mut stack = StackLinked::new();
-    let mut arr: Vec<i32> = vec![5, 10, -5];
-    let new_arr = asteroid_collision(&mut arr);
-    for item in new_arr.iter() {
-        print!("{} ", *item);
-    }
-    println!();
+    // let mut arr: Vec<i32> = vec![5, 10, -5];
+    // let new_arr = asteroid_collision(&mut arr);
+    // for item in new_arr.iter() {
+    //     print!("{} ", *item);
+    // }
+    // println!();
     // stack.push(1);
     // stack.print();
     // stack.push(2);
