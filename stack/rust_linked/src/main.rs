@@ -244,7 +244,41 @@ fn score_of_parentheses(s: String) -> i32 {
     score
 }
 
+pub fn daily_temperatures(temperatures: Vec<i32>) -> Vec<i32> {
+    let mut stack: Vec<i32> = Vec::new();
+    let mut res: Vec<i32> = vec![0; temperatures.len()];
+
+    for i in 0..=temperatures.len() - 2 {
+        if temperatures[i] < temperatures[i + 1] {
+            res[i] = 1;
+            while !stack.is_empty() {
+                if let Some(peek) = stack.last().cloned() {
+                    if temperatures[peek as usize] < temperatures[i + 1] {
+                        if let Some(poped) = stack.pop() {
+                            res[poped as usize] = i as i32 - poped + 1;
+                        }
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+        } else {
+            stack.push(i as i32);
+        }
+    }
+
+    res
+}
+//73 74 75 71 69 72 76 73
+
 fn main() {
+    let arr: Vec<i32> = vec![30, 40, 50, 60];
+    let res: Vec<i32> = daily_temperatures(arr);
+    for item in res.iter() {
+        print!("{} ", *item);
+    }
     // let mut stack = StackLinked::new();
     // let mut arr: Vec<i32> = vec![5, 10, -5];
     // let new_arr = asteroid_collision(&mut arr);
