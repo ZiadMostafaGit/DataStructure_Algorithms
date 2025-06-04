@@ -1,3 +1,5 @@
+use std::{error, i32, i64, thread::current};
+
 struct Node {
     val: i32,
     left: Option<Box<Node>>,
@@ -61,6 +63,24 @@ impl BSA {
             Self::inorder_print(&node.right);
         }
     }
+
+    fn find(current: &Option<Box<Node>>, ansestor: &mut Vec<i32>, target: i32) -> Option<bool> {
+        if let Some(node) = current {
+            ansestor.push(node.val);
+            if node.val > target {
+                return Self::find(&node.left, ansestor, target);
+            } else if node.val < target {
+                return Self::find(&node.right, ansestor, target);
+            } else {
+                return Some(true);
+            }
+        }
+        return Some(false);
+    }
+
+    // fn delete(&mut self, val: i64) -> Result<bool, i64> {
+    //     let mut ansestor: Vec<i64> = Vec::new();
+    // }
 }
 
 fn main() {
@@ -78,5 +98,14 @@ fn main() {
 
     println!("Inorder traversal:");
     BSA::inorder_print(&bst.root);
+
     println!(); // Add a newline at the end
+
+    let mut ansestor: Vec<i32> = Vec::new();
+    let is_there = BSA::find(&bst.root, &mut ansestor, 44);
+
+    match is_there {
+        Some(val) => println!("the find func return some thing which is {}", val),
+        None => println!("the find func return nono which mean we have problem "),
+    }
 }
