@@ -1,5 +1,3 @@
-use std::{error, i32, i64, thread::current};
-
 struct Node {
     val: i32,
     left: Option<Box<Node>>,
@@ -64,23 +62,9 @@ impl BSA {
         }
     }
 
-    fn find(current: &Option<Box<Node>>, ansestor: &mut Vec<i32>, target: i32) -> Option<bool> {
-        if let Some(node) = current {
-            ansestor.push(node.val);
-            if node.val > target {
-                return Self::find(&node.left, ansestor, target);
-            } else if node.val < target {
-                return Self::find(&node.right, ansestor, target);
-            } else {
-                return Some(true);
-            }
-        }
-        return Some(false);
+    fn delete(&self, val: i32) {
+        Self::delete_node()
     }
-
-    // fn delete(&mut self, val: i64) -> Result<bool, i64> {
-    //     let mut ansestor: Vec<i64> = Vec::new();
-    // }
 }
 
 fn main() {
