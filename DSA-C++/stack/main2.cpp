@@ -1,18 +1,16 @@
-#include <algorithm> // For std::reverse
+#include <algorithm>
 #include <iostream>
-#include <stack> // Using std::stack for standard stack operations
+#include <stack>
 #include <string>
 #include <vector>
 
-// Custom Stack implementation using std::vector (no smart pointers for internal
-// elements needed here)
 template <typename T> class Stack {
 public:
   std::vector<T> data;
   unsigned int size;
 
   Stack(size_t capacity) : data(), size(0) {
-    data.reserve(capacity); // Pre-allocate memory for efficiency
+    data.reserve(capacity);
   }
 
   void push(T val) {
@@ -53,7 +51,7 @@ public:
 };
 
 long long reverseNumber(long long num) {
-  std::stack<char> charStack; // Using std::stack for char
+  std::stack<char> charStack;
   std::string s = std::to_string(num);
   for (char c : s) {
     charStack.push(c);
@@ -66,12 +64,12 @@ long long reverseNumber(long long num) {
   try {
     return std::stoll(reversed_str);
   } catch (const std::exception &e) {
-    return 0; // Or handle error appropriately
+    return 0;
   }
 }
 
 bool isValidParentheses(const std::string &s) {
-  std::stack<char> charStack; // Using std::stack for char
+  std::stack<char> charStack;
   for (char c : s) {
     if (c == '(' || c == '[' || c == '{') {
       charStack.push(c);
@@ -128,12 +126,12 @@ std::string removeDuplicates(const std::string &s) {
     res += charStack.top();
     charStack.pop();
   }
-  std::reverse(res.begin(), res.end()); // Stack pops in reverse order
+  std::reverse(res.begin(), res.end());
   return res;
 }
 
 std::string reverseParentheses(const std::string &s) {
-  std::string res = s; // Use string for easier modification
+  std::string res = s;
   std::stack<int> open_paren_indices;
 
   for (int i = 0; i < res.length(); ++i) {
@@ -163,7 +161,7 @@ int main() {
   myStack.push(2);
   myStack.push(3);
   myStack.push(4);
-  myStack.push(5); // Will dynamically grow if using std::vector directly
+  myStack.push(5);
   std::cout << "Initial stack: ";
   myStack.print();
 

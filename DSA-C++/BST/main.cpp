@@ -1,8 +1,7 @@
 #include <iostream>
-#include <memory> // For std::shared_ptr, std::weak_ptr
+#include <memory>
 #include <vector>
 
-// Node structure for the Binary Search Tree
 struct Node {
   int val;
   std::shared_ptr<Node> left;
@@ -11,7 +10,6 @@ struct Node {
   Node(int v) : val(v), left(nullptr), right(nullptr) {}
 };
 
-// Binary Search Tree (BSA) structure
 class BSA {
 public:
   std::shared_ptr<Node> root;
@@ -28,25 +26,18 @@ public:
     }
   }
 
-  // Inorder traversal for printing
   void inorderPrint() const {
     inorderPrintRecursive(root);
     std::cout << std::endl;
   }
 
-  // This find function was in the main but not in the Rust struct, adding a
-  // basic one for completeness
   std::shared_ptr<Node> find(int val) const { return findRecursive(root, val); }
 
-  // Delete functionality (simplified for this example, a full BST delete is
-  // more complex)
   void deleteNode(int val) {
     if (root == nullptr) {
       std::cout << "no root so the tree is empty" << std::endl;
       return;
     }
-    // A full delete implementation for BSTs involves finding the node,
-    // handling 0, 1, or 2 children cases. This is a placeholder.
     std::cout << "Delete function is a placeholder and not fully implemented "
                  "for a BST."
               << std::endl;
@@ -67,8 +58,6 @@ private:
         insertRecursive(current->left, val);
       }
     }
-    // If val == current->val, we typically do nothing for a BST (no
-    // duplicates).
   }
 
   void inorderPrintRecursive(std::shared_ptr<Node> current) const {

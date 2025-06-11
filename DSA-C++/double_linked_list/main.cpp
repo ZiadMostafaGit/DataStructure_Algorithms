@@ -1,19 +1,16 @@
 #include <iostream>
-#include <memory> // For std::shared_ptr, std::weak_ptr
-#include <vector> // For some operations like swap_kth, though not strictly needed for the list structure
+#include <memory>
 
-// Node structure for the Doubly Linked List
 struct Node {
   int val;
   std::shared_ptr<Node> next;
-  std::weak_ptr<Node> prev; // Use weak_ptr to break circular references
+  std::weak_ptr<Node> prev;
 
   Node(int v)
       : val(v), next(nullptr), prev() {
-  } // prev is default constructed to empty weak_ptr
+}
 };
 
-// Doubly Linked List structure
 class LinkedList {
 public:
   std::shared_ptr<Node> head;
@@ -28,7 +25,7 @@ public:
       head = newNode;
       tail = newNode;
     } else {
-      newNode->prev = tail; // Assign weak_ptr to prev
+      newNode->prev = tail;
       tail->next = newNode;
       tail = newNode;
     }
@@ -42,7 +39,7 @@ public:
       tail = newNode;
     } else {
       newNode->next = head;
-      head->prev = newNode; // Assign weak_ptr to prev
+      head->prev = newNode;
       head = newNode;
     }
     length++;
@@ -52,12 +49,12 @@ public:
     if (head == nullptr) {
       return;
     }
-    if (head == tail) { // Only one node
+    if (head == tail) {
       head = nullptr;
       tail = nullptr;
     } else {
       std::shared_ptr<Node> newTail =
-          tail->prev.lock(); // Upgrade weak_ptr to shared_ptr
+          tail->prev.lock();
       if (newTail) {
         newTail->next = nullptr;
         tail = newTail;
@@ -70,13 +67,13 @@ public:
     if (head == nullptr) {
       return;
     }
-    if (head == tail) { // Only one node
+    if (head == tail) {
       head = nullptr;
       tail = nullptr;
     } else {
       head = head->next;
       if (head) {
-        head->prev.reset(); // Reset weak_ptr
+        head->prev.reset();
       }
     }
     length--;
@@ -106,8 +103,6 @@ public:
     }
   }
 
-  // Function to search for a value and return its index
-  // Returns -1 if not found
   int search(int val) const {
     std::shared_ptr<Node> current = head;
     int index = 0;
@@ -118,7 +113,7 @@ public:
       current = current->next;
       index++;
     }
-    return -1; // Not found
+    return -1;
   }
 
   void printForward() const {
@@ -134,7 +129,7 @@ public:
     std::shared_ptr<Node> current = tail;
     while (current) {
       std::cout << current->val << " ";
-      current = current->prev.lock(); // Upgrade weak_ptr to shared_ptr
+      current = current->prev.lock();
     }
     std::cout << std::endl;
   }
@@ -169,13 +164,11 @@ public:
       right_node = right_node->prev.lock();
     }
 
-    if (left_node == right_node) { // Same node or k is middle for odd length
+    if (left_node == right_node) {
       return;
     }
 
-    // Handle adjacent nodes swap (left_node -> right_node or right_node ->
-    // left_node)
-    if (left_node->next == right_node) { // left is before right
+    if (left_node->next == right_node) {
       std::shared_ptr<Node> left_prev = left_node->prev.lock();
       std::shared_ptr<Node> right_next = right_node->next;
 
@@ -197,20 +190,14 @@ public:
       left_node->next = right_next;
       return;
     } else if (right_node->next ==
-               left_node) { // right is before left (shouldn't happen with k
-                            // from ends)
-      // This case is essentially symmetric to the above, handled by general
-      // swap logic or by ensuring left_node is always "left" in order. For
-      // simplicity, the general swap will handle it.
+               left_node) {
     }
 
-    // General swap logic for non-adjacent nodes
     std::shared_ptr<Node> left_prev = left_node->prev.lock();
     std::shared_ptr<Node> left_next = left_node->next;
     std::shared_ptr<Node> right_prev = right_node->prev.lock();
     std::shared_ptr<Node> right_next = right_node->next;
 
-    // Update pointers around left_node
     if (left_prev) {
       left_prev->next = right_node;
     } else {
@@ -219,14 +206,13 @@ public:
     if (left_next) {
       left_next->prev = right_node;
     } else {
-      tail = right_node; // Should not happen if left_node is not tail
+      tail = right_node;
     }
 
-    // Update pointers around right_node
     if (right_prev) {
       right_prev->next = left_node;
     } else {
-      head = left_node; // Should not happen if right_node is not head
+      head = left_node;
     }
     if (right_next) {
       right_next->prev = left_node;
@@ -234,7 +220,6 @@ public:
       tail = left_node;
     }
 
-    // Swap next and prev pointers of the nodes themselves
     std::swap(left_node->next, right_node->next);
     std::swap(left_node->prev, right_node->prev);
   }
@@ -250,10 +235,10 @@ public:
 
     while (current) {
       temp_next = current->next;
-      temp_prev = current->prev.lock(); // Upgrade weak_ptr
+      temp_prev = current->prev.lock();
 
       current->next = temp_prev;
-      current->prev = temp_next; // Convert shared_ptr to weak_ptr implicitly
+      current->prev = temp_next;
 
       current = temp_next;
     }
@@ -277,31 +262,30 @@ int main() {
   std::cout << "List backward:" << std::endl;
   list.printBackward();
 
-  // Uncomment to test other functions
-  // list.popFront();
-  // list.popBack();
-  // std::cout << "After popping front and back:" << std::endl;
-  // list.printForward();
+ list.popFront();
+   list.popBack();
+   std::cout << "After popping front and back:" << std::endl;
+   list.printForward();
 
-  // list.insert(1, 15);
-  // std::cout << "After inserting 15 at index 1:" << std::endl;
-  // list.printForward();
+   list.insert(1, 15);
+   std::cout << "After inserting 15 at index 1:" << std::endl;
+   list.printForward();
 
-  // int search_val = 10;
-  // int index = list.search(search_val)#;
-#// if (index != -1) {
-  //     std::cout << "Value " << search_val << " found at index: " << index <<
-  //     std::endl;
-  // } else {
-  //     std::cout << "Value " << search_val << " not found." << std::endl;
-  // }
+   int search_val = 10;
+   int index = list.search(search_val);
+ if (index != -1) {
+     std::cout << "Value " << search_val << " found at index: " << index <<
+     std::endl;
+   } else {
+       std::cout << "Value " << search_val << " not found." << std::endl;
+   }
 
-  // std::shared_ptr<Node> mid_node = list.findMid();
-  // if (mid_node) {
-  //     std::cout << "Middle element: " << mid_node->val << std::endl;
-  // } else {
-  //     std::cout << "List is empty." << std::endl;
-  // }
+   std::shared_ptr<Node> mid_node = list.findMid();
+   if (mid_node) {
+       std::cout << "Middle element: " << mid_node->val << std::endl;
+   } else {
+       std::cout << "List is empty." << std::endl;
+   }
 
   std::cout << "Before swap_kth:" << std::endl;
   list.printForward();

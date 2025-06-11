@@ -1,9 +1,7 @@
 #include <iostream>
 #include <memory>
-#include <queue>  // For std::queue
-#include <vector> // Not strictly needed, but common for dynamic arrays
+#include <queue>
 
-// Node structure for the Binary Tree
 template <typename T> struct Node {
   T val;
   std::shared_ptr<Node<T>> left;
@@ -12,7 +10,6 @@ template <typename T> struct Node {
   Node(T v) : val(v), left(nullptr), right(nullptr) {}
 };
 
-// Binary Tree structure
 template <typename T> class BinaryTree {
 public:
   std::shared_ptr<Node<T>> root;

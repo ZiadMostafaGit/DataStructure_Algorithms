@@ -1,35 +1,27 @@
-#include <algorithm> // For std::rotate (more efficient rotations)
+#include <algorithm>
 #include <iostream>
-#include <vector> // For std::vector
+#include <vector>
 
-// Custom Array (dynamic array) structure
 class Array {
 private:
   std::vector<int> arr;
   size_t current_size;
-  size_t current_capacity; // std::vector manages this internally, but keeping
-                           // for direct mapping
+  size_t current_capacity;
 
 public:
   Array(size_t capa) : arr(capa), current_size(0), current_capacity(capa) {}
 
-  // Double capacity is handled by std::vector's push_back/insert automatically
-  // but explicit function can be implemented if wanted
   void doubleCapacity() {
-    // std::vector handles this automatically when needed
-    // If we want to strictly mimic Rust's manual doubling:
     current_capacity *= 2;
-    arr.reserve(current_capacity); // Pre-allocates memory
+    arr.reserve(current_capacity);
   }
 
   void pushBack(int num) {
-    // std::vector's push_back handles capacity increase automatically
     arr.push_back(num);
-    current_size = arr.size();         // Keep track of logical size
-    current_capacity = arr.capacity(); // Keep track of allocated capacity
+    current_size = arr.size();
+    current_capacity = arr.capacity();
   }
 
-  // Using std::vector::pop_back()
   void pop() {
     if (arr.empty()) {
       std::cerr << "array is empty" << std::endl;
@@ -60,14 +52,12 @@ public:
     std::cout << "]" << std::endl;
   }
 
-  // Efficient right rotation using std::rotate
   void rightRotation() {
     if (current_size == 0)
       return;
     std::rotate(arr.rbegin(), arr.rbegin() + 1, arr.rend());
   }
 
-  // Efficient left rotation using std::rotate
   void leftRotation() {
     if (current_size == 0)
       return;
@@ -93,7 +83,6 @@ public:
     return deleted_val;
   }
 
-  // Improved search: move found element one position forward
   ssize_t improvedSearch(int num) {
     for (size_t i = 0; i < current_size; ++i) {
       if (arr[i] == num) {
@@ -108,36 +97,36 @@ public:
 };
 
 int main() {
-  Array arr(5); // Initial capacity 5
+  Array arr(5);
   arr.pushBack(1);
   arr.pushBack(2);
   arr.pushBack(3);
   std::cout << "Initial array: ";
-  arr.print(); // Expected: [1, 2, 3]
+  arr.print();
 
   std::cout << "After right rotation: ";
   arr.rightRotation();
-  arr.print(); // Expected: [3, 1, 2]
+  arr.print();
 
   std::cout << "After left rotation: ";
   arr.leftRotation();
-  arr.print(); // Expected: [1, 2, 3]
+  arr.print();
 
   arr.pushBack(4);
   arr.pushBack(5);
-  arr.pushBack(6); // Will automatically resize underlying vector
+  arr.pushBack(6);
   std::cout << "After more pushes: ";
-  arr.print(); // Expected: [1, 2, 3, 4, 5, 6]
+  arr.print();
 
   std::cout << "After right rotation with 2 steps: ";
   arr.rightRotationWithSteps(2);
-  arr.print(); // Expected: [5, 6, 1, 2, 3, 4]
+  arr.print();
 
   try {
     std::cout << "Deleting element at index 2: " << arr.deletePosition(2)
               << std::endl;
     std::cout << "Array after deletion: ";
-    arr.print(); // Expected: [5, 6, 2, 3, 4] (if 1 was at index 2)
+    arr.print();
   } catch (const std::out_of_range &e) {
     std::cerr << "Error: " << e.what() << std::endl;
   }

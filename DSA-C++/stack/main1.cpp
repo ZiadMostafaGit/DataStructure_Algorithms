@@ -1,20 +1,17 @@
-#include <algorithm> // For std::max, std::reverse
+#include <algorithm>
 #include <iostream>
-#include <memory> // For std::shared_ptr
-#include <stack>  // Using std::stack for simpler stack operations
+#include <memory>
+#include <stack>
 #include <string>
 #include <vector>
 
-// Node structure for the linked list based Stack
 template <typename T> struct Node {
   T data;
-  std::shared_ptr<Node<T>> prev; // 'prev' in Rust stack implies a linked list
-                                 // where new elements point to old head
+  std::shared_ptr<Node<T>> prev;
 
   Node(T d) : data(d), prev(nullptr) {}
 };
 
-// StackLinked implementation using std::shared_ptr
 template <typename T> class StackLinked {
 public:
   std::shared_ptr<Node<T>> head;
@@ -52,31 +49,21 @@ public:
 
   void print() const {
     std::shared_ptr<Node<T>> current = head;
-    unsigned int mid = 0;
-    if (size >= 2) {
-      mid = size / 2;
-    }
-    unsigned int index = 0;
-    std::vector<T> temp_vec; // To print in order
+    std::vector<T> temp_vec;
     while (current) {
       temp_vec.push_back(current->data);
       current = current->prev;
     }
     std::reverse(temp_vec.begin(),
-                 temp_vec.end()); // Reverse to print from bottom to top
+                 temp_vec.end());
 
     for (const T &item : temp_vec) {
-      // Re-calculating index from the start for printing mid-element correctly
-      // This is a bit complex for a simple print, original Rust code prints
-      // from head (top) C++ std::stack doesn't expose internal nodes directly
-      // for fancy printing like this. Sticking to simple print for now.
       std::cout << item << " ";
     }
     std::cout << std::endl;
   }
 };
 
-// Helper function for operator precedence
 int precedence(char op) {
   if (op == '+' || op == '-')
     return 1;
@@ -91,7 +78,7 @@ std::string evaluatePostFix(const std::string &input) {
   std::stack<int> stack;
   for (char val : input) {
     if (isdigit(val)) {
-      stack.push(val - '0'); // Convert char to int
+      stack.push(val - '0');
     } else {
       if (stack.size() < 2) {
         throw std::runtime_error("invalid stack operation");
@@ -133,7 +120,7 @@ std::string fromInfixToPostfix(const std::string &input) {
   std::stack<char> stack;
 
   for (char c : input) {
-    if (isalnum(c)) { // is alpha or digit
+    if (isalnum(c)) {
       output += c;
     } else if (c == '(') {
       stack.push(c);
@@ -143,9 +130,9 @@ std::string fromInfixToPostfix(const std::string &input) {
         stack.pop();
       }
       if (!stack.empty() && stack.top() == '(') {
-        stack.pop(); // Pop '('
+        stack.pop();
       }
-    } else { // Operator
+    } else {
       while (!stack.empty() && precedence(stack.top()) >= precedence(c) &&
              stack.top() != '(') {
         output += stack.top();
@@ -173,10 +160,10 @@ std::vector<int> asteroidCollision(std::vector<int> &astro) {
         stack.pop();
       } else if (std::abs(val) == stack.top()) {
         stack.pop();
-        pushed = true; // Both explode
+        pushed = true;
         break;
-      } else {         // stack.top() > std::abs(val)
-        pushed = true; // Current asteroid explodes
+      } else {
+        pushed = true;
         break;
       }
     }
@@ -225,54 +212,54 @@ std::vector<int> dailyTemperatures(const std::vector<int> &temperatures) {
 }
 
 int main() {
-  std::vector<int> arr = {30, 40, 50, 60};
+  std::vector<int> arr = {30, 25,20,15, 50, 60};
   std::vector<int> res = dailyTemperatures(arr);
   for (int item : res) {
     std::cout << item << " ";
   }
   std::cout << std::endl;
 
-  // Uncomment to test other functionalities
 
-  // StackLinked<int> myStack;
-  // myStack.push(1);
-  // myStack.push(2);
-  // myStack.push(3);
-  // myStack.print();
-  // try {
-  //     std::cout << "Popped: " << myStack.pop() << std::endl;
-  //     std::cout << "Peeked: " << myStack.peek() << std::endl;
-  // } catch (const std::runtime_error& e) {
-  //     std::cerr << "Error: " << e.what() << std::endl;
-  // }
-  // myStack.print();
+  StackLinked<int> myStack;
+  myStack.push(1);
+  myStack.push(2);
+  myStack.push(3);
+  myStack.print();
+  try {
+      std::cout << "Popped: " << myStack.pop() << std::endl;
+      std::cout << "Peeked: " << myStack.peek() << std::endl;
+  } catch (const std::runtime_error& e) {
+      std::cerr << "Error: " << e.what() << std::endl;
+  }
+  myStack.print();
 
-  // std::cout << "Infix to Postfix conversions:" << std::endl;
-  // try {
-  //     std::cout << "((2+3)*4-(7-5))*(6+3) -> " <<
-  //     fromInfixToPostfix("((2+3)*4-(7-5))*(6+3)") << std::endl; std::cout <<
-  //     "5-9/(3*4/2) -> " << fromInfixToPostfix("5-9/(3*4/2)") << std::endl;
-  //     std::cout << "(1+2)*(6-4) -> " << fromInfixToPostfix("(1+2)*(6-4)") <<
-  //     std::endl; std::cout << "1+2*3-4 -> " << fromInfixToPostfix("1+2*3-4")
-  //     << std::endl; std::cout << "1+2*3 -> " << fromInfixToPostfix("1+2*3")
-  //     << std::endl; std::cout << "2+(3*(4-5*2)*(9/3+6)) -> " <<
-  //     fromInfixToPostfix("2+(3*(4-5*2)*(9/3+6))") << std::endl; std::cout <<
-  //     "a+b*(c^d-e)^(f+G*h)-i -> " <<
-  //     fromInfixToPostfix("a+b*(c^d-e)^(f+G*h)-i") << std::endl;
-  // } catch (const std::runtime_error& e) {
-  //     std::cerr << "Error: " << e.what() << std::endl;
-  // }
+  std::cout << "Infix to Postfix conversions:" << std::endl;
+  try {
+      std::cout << "((2+3)*4-(7-5))*(6+3) -> " <<
+      fromInfixToPostfix("((2+3)*4-(7-5))*(6+3)") << std::endl; std::cout <<
+      "5-9/(3*4/2) -> " << fromInfixToPostfix("5-9/(3*4/2)") << std::endl;
+      std::cout << "(1+2)*(6-4) -> " << fromInfixToPostfix("(1+2)*(6-4)") <<
+      std::endl; std::cout << "1+2*3-4 -> " << fromInfixToPostfix("1+2*3-4")
+      << std::endl; std::cout << "1+2*3 -> " << fromInfixToPostfix("1+2*3")
+      << std::endl; std::cout << "2+(3*(4-5*2)*(9/3+6)) -> " <<
+      fromInfixToPostfix("2+(3*(4-5*2)*(9/3+6))") << std::endl; std::cout <<
+      "a+b*(c^d-e)^(f+G*h)-i -> " <<
+      fromInfixToPostfix("a+b*(c^d-e)^(f+G*h)-i") << std::endl;
+  } catch (const std::runtime_error& e) {
+      std::cerr << "Error: " << e.what() << std::endl;
+  }
 
-  // std::cout << "Asteroid Collision:" << std::endl;
-  // std::vector<int> asteroids = {5, 10, -5};
-  // std::vector<int> remaining_asteroids = asteroidCollision(asteroids);
-  // for (int a : remaining_asteroids) {
-  //     std::cout << a << " ";
-  // }
-  // std::cout << std::endl;
+  std::cout << "Asteroid Collision:" << std::endl;
+  std::vector<int> asteroids = {5, 10, -5};
+  std::vector<int> remaining_asteroids = asteroidCollision(asteroids);
+  for (int a : remaining_asteroids) {
+      std::cout << a << " ";
+  }
+  std::cout << std::endl;
 
-  // std::cout << "Score of Parentheses: \"(()(()))\":" <<
-  // scoreOfParentheses("(()(()))") << std::endl;
+  std::cout << "Score of Parentheses: \"(()(()))\":" <<
+  scoreOfParentheses("(()(()))") << std::endl;
 
   return 0;
 }
+//
