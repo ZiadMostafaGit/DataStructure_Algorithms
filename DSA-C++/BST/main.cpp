@@ -1,5 +1,7 @@
 #include <iostream>
 #include <memory>
+#include <optional>
+#include <ostream>
 #include <vector>
 
 struct Node {
@@ -26,22 +28,21 @@ public:
     }
   }
 
+  void Delete(int val) {
+    if (isEmpty()) {
+      std::cout << "the tree is empty" << std::endl;
+    }
+
+    std::shared_ptr<Node> current = std::make_shared<Node>(root);
+    deleteNode(current, val);
+  }
+
   void inorderPrint() const {
     inorderPrintRecursive(root);
     std::cout << std::endl;
   }
 
   std::shared_ptr<Node> find(int val) const { return findRecursive(root, val); }
-
-  void deleteNode(int val) {
-    if (root == nullptr) {
-      std::cout << "no root so the tree is empty" << std::endl;
-      return;
-    }
-    std::cout << "Delete function is a placeholder and not fully implemented "
-                 "for a BST."
-              << std::endl;
-  }
 
 private:
   void insertRecursive(std::shared_ptr<Node> &current, int val) {
@@ -78,6 +79,35 @@ private:
     } else {
       return findRecursive(current->right, val);
     }
+  }
+
+  std::optional<int> deleteNode(std::shared_ptr<Node> current, int val) {
+
+    if (current == nullptr) {
+      return std::nullopt;
+    }
+    if (current->val > val) {
+      deleteNode(current->left, val);
+    } else if (current->val < val) {
+      deleteNode(current->right, val);
+    } else {
+      if (!current->left && !current->right) {
+        current = nullptr;
+      } else if (!current->right) {
+
+      } else if (current->left && current->right) {
+        std::shared_ptr<Node> sucssesor = get_min(current->right);
+        current->val = sucssesor->val;
+        deleteNode(current->right, current->val);
+      }
+    }
+  }
+
+  std::shared_ptr<Node> get_min(std::shared_ptr<Node> current) {
+    while (!current->right && !current->left) {
+      current = current->left;
+    }
+    return current;
   }
 };
 
