@@ -1,3 +1,8 @@
+
+
+
+
+
 struct Node {
     val: i32,
     left: Option<Box<Node>>,
@@ -70,28 +75,19 @@ impl BSA {
     }
 }
 
-fn delete_node(node: &mut Box<Node>, val: i32) {
-    if node.val == val {
-        if node.left.is_none() && node.right.is_none() {
-            node = None;
-        } else if node.right.is_none() {
-            if let Some(left) = node.left.as_mut() {
-                node = left;
-            }
+fn delete_node(node: &mut Option<Box<Node>>, val: i32) {
+    if let Some(mut n) = node.take() {
+        if n.val > val {
+            delete_node(&mut n.left, val);
+            *node=Some(n);
+        } else if n.val < val {
+            delete_node(&mut n.right, val);
+            *node=Some(n);
         } else {
-            if let Some(right) = node.right.as_mut() {
-                node = get_min(right);
-            }
-        }
-    } else if node.val > val {
-        if let Some(left) = node.left.as_mut() {
-            delete_node(left, val);
-        }
-    } else if node.val < val {
-        if let Some(right) = node.right.as_mut() {
-            delete_node(right, val);
-        }
-    }
+      }
+
+
+  }
 }
 
 fn main() {

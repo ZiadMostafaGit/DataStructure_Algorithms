@@ -1,9 +1,10 @@
 #include <iostream>
+using namespace std;
+#include <math.h>
 #include <memory>
 #include <optional>
-#include <ostream>
+#include <unordered_set>
 #include <vector>
-
 struct Node {
   int val;
   std::shared_ptr<Node> left;
@@ -81,27 +82,7 @@ private:
     }
   }
 
-  std::optional<int> deleteNode(std::shared_ptr<Node> current, int val) {
-
-    if (current == nullptr) {
-      return std::nullopt;
-    }
-    if (current->val > val) {
-      deleteNode(current->left, val);
-    } else if (current->val < val) {
-      deleteNode(current->right, val);
-    } else {
-      if (!current->left && !current->right) {
-        current = nullptr;
-      } else if (!current->right) {
-
-      } else if (current->left && current->right) {
-        std::shared_ptr<Node> sucssesor = get_min(current->right);
-        current->val = sucssesor->val;
-        deleteNode(current->right, current->val);
-      }
-    }
-  }
+  std::optional<int> deleteNode(std::shared_ptr<Node> current, int val) {}
 
   std::shared_ptr<Node> get_min(std::shared_ptr<Node> current) {
     while (!current->right && !current->left) {
