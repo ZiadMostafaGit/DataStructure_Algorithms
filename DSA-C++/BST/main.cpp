@@ -1,126 +1,171 @@
 #include <iostream>
-using namespace std;
-#include <math.h>
 #include <memory>
-#include <optional>
-#include <unordered_set>
 #include <vector>
-struct Node {
-  int val;
-  std::shared_ptr<Node> left;
-  std::shared_ptr<Node> right;
+using namespace std;
 
-  Node(int v) : val(v), left(nullptr), right(nullptr) {}
+struct Node {
+    int val;
+    unique_ptr<Node> left;
+    unique_ptr<Node> right;
+
+    Node(int v) : val(v), left(nullptr), right(nullptr) {}
 };
 
 class BSA {
 public:
-  std::shared_ptr<Node> root;
+	Node*head=nullptr;
+	Node*prev=nullptr;
+    unique_ptr<Node> root;
 
-  BSA() : root(nullptr) {}
-
-  bool isEmpty() const { return root == nullptr; }
-
-  void insert(int val) {
-    if (root == nullptr) {
-      root = std::make_shared<Node>(val);
-    } else {
-      insertRecursive(root, val);
-    }
-  }
-
-  void Delete(int val) {
-    if (isEmpty()) {
-      std::cout << "the tree is empty" << std::endl;
+    bool isEmpty() const {
+        return root == nullptr;
     }
 
-    std::shared_ptr<Node> current = std::make_shared<Node>(root);
-    deleteNode(current, val);
-  }
+    void insert(int val) {
+        insertRecursive(root, val);
+    }
 
-  void inorderPrint() const {
-    inorderPrintRecursive(root);
-    std::cout << std::endl;
-  }
+    void Delete(int val) {
+        deleteNode(root, val);
+    }
 
-  std::shared_ptr<Node> find(int val) const { return findRecursive(root, val); }
+    void inorderPrint() const {
+        inorderPrintRecursive(root.get());
+        cout << endl;
+    }
+
+    Node* find(int val) const {
+        return findRecursive(root.get(), val);
+    }
 
 private:
-  void insertRecursive(std::shared_ptr<Node> &current, int val) {
-    if (val > current->val) {
-      if (current->right == nullptr) {
-        current->right = std::make_shared<Node>(val);
-      } else {
-        insertRecursive(current->right, val);
-      }
-    } else if (val < current->val) {
-      if (current->left == nullptr) {
-        current->left = std::make_shared<Node>(val);
-      } else {
-        insertRecursive(current->left, val);
-      }
-    }
-  }
 
-  void inorderPrintRecursive(std::shared_ptr<Node> current) const {
-    if (current) {
-      inorderPrintRecursive(current->left);
-      std::cout << current->val << " ";
-      inorderPrintRecursive(current->right);
-    }
-  }
 
-  std::shared_ptr<Node> findRecursive(std::shared_ptr<Node> current,
-                                      int val) const {
-    if (current == nullptr || current->val == val) {
-      return current;
-    }
-    if (val < current->val) {
-      return findRecursive(current->left, val);
-    } else {
-      return findRecursive(current->right, val);
-    }
-  }
+Node* convert_to_double_linked_list(){
 
-  std::optional<int> deleteNode(std::shared_ptr<Node> current, int val) {}
+inorder_swap(root.get());
+	return head;
+}
 
-  std::shared_ptr<Node> get_min(std::shared_ptr<Node> current) {
-    while (!current->right && !current->left) {
-      current = current->left;
+
+
+void inorder_swap(Node*current){
+
+	if(!current){
+		return ;
+	}
+
+
+
+
+
+	if(prev){
+
+		prev->right=current;
+		current->left=prev;
+
+
+
+
+	}else{
+		head=current;
+
+	}
+	prev=current;
+
+
+
+}
+
+
+
+
+
+
+    void insertRecursive(unique_ptr<Node>& node, int val) {
+        if (!node) {
+            node = make_unique<Node>(val);
+            return;
+        }
+        if (val < node->val) {
+            insertRecursive(node->left, val);
+        } else if (val > node->val) {
+            insertRecursive(node->right, val);
+        }
     }
-    return current;
-  }
+
+    void inorderPrintRecursive(const Node* node) const {
+        if (node) {
+            inorderPrintRecursive(node->left.get());
+            cout << node->val << " ";
+            inorderPrintRecursive(node->right.get());
+        }
+    }
+
+    Node* findRecursive(Node* node, int val) const {
+        if (!node || node->val == val) return node;
+        if (val < node->val) return findRecursive(node->left.get(), val);
+        else return findRecursive(node->right.get(), val);
+    }
+
+    Node* getMin(Node* node) const {
+        while (node && node->left) {
+            node = node->left.get();
+        }
+        return node;
+    }
+
+    void deleteNode(unique_ptr<Node>& node, int val) {
+        if (!node) return;
+
+        if (val < node->val) {
+            deleteNode(node->left, val);
+        } else if (val > node->val) {
+            deleteNode(node->right, val);
+        } else {
+            if (!node->left && !node->right) {
+                node.reset(); 
+		} else if (!node->left) {
+                node = std::move(node->right);
+            } else if (!node->right) {
+                node = std::move(node->left);
+            } else {
+                Node* minRight = getMin(node->right.get());
+                node->val = minRight->val;
+                deleteNode(node->right, minRight->val);
+            }
+        }
+    }
 };
 
+
+
+
+
+
+
+
+
 int main() {
-  BSA bst;
+    BSA bst;
+    vector<int> values = {8, 3, 10, 1, 6, 14, 4, 7, 13};
 
-  std::cout << "Is BST empty? " << (bst.isEmpty() ? "true" : "false")
-            << std::endl;
+    for (int val : values) {
+        bst.insert(val);
+    }
 
-  std::vector<int> values = {8, 3, 10, 1, 6, 14, 4, 7, 13};
-  std::cout << "Inserting values: ";
-  for (int val : values) {
-    std::cout << val << " ";
-    bst.insert(val);
-  }
-  std::cout << std::endl;
+    cout << "Inorder traversal:\n";
+    bst.inorderPrint();
 
-  std::cout << "Is BST empty after insertion? "
-            << (bst.isEmpty() ? "true" : "false") << std::endl;
+    Node* found = bst.find(6);
+    cout << "Find 6: " << (found ? "Found!" : "Not found!") << endl;
 
-  std::cout << "Inorder traversal:" << std::endl;
-  bst.inorderPrint();
+    cout << "Delete 6...\n";
+    bst.Delete(6);
+    bst.inorderPrint();
 
-  std::shared_ptr<Node> foundNode = bst.find(44);
-  if (foundNode) {
-    std::cout << "The find func returned something which is " << foundNode->val
-              << std::endl;
-  } else {
-    std::cout << "The find func returned nullptr, which means we have a "
-                 "problem (or value not found)."
-              << std::endl;
-  }
-
-  return 0;
+    cout << "Delete 8 (root)...\n";
+    bst.Delete(8);
+    bst.inorderPrint();
 }
+
