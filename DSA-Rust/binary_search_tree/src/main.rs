@@ -1,8 +1,3 @@
-
-
-
-
-
 struct Node {
     val: i32,
     left: Option<Box<Node>>,
@@ -68,26 +63,38 @@ impl BSA {
     }
 
     fn delete(&mut self, val: i32) {
-        match self.root.as_mut() {
-            Some(node) => delete_node(node, val),
-            None => println!("no root so the tree is empty"),
-        }
+        delete_node(&mut self.root, val);
     }
 }
 
 fn delete_node(node: &mut Option<Box<Node>>, val: i32) {
-    if let Some(mut n) = node.take() {
+    if let Some(n) = node {
         if n.val > val {
             delete_node(&mut n.left, val);
-            *node=Some(n);
         } else if n.val < val {
             delete_node(&mut n.right, val);
-            *node=Some(n);
         } else {
-      }
+            match (n.left.take(), n.right.take()) {
+                (None, None) => *node = None,
+                (Some(left), None) => *node = Some(left),
+                (None, Some(right)) => *node = Some(right),
+                (Some(left), Some(right)) => {
+                    let min_val = find_min(&right);
+                    n.val = min_val;
+                    n.left = Some(left);
+                    n.right = Some(right);
+                    delete_node(&mut n.right, min_val);
+                }
+            }
+        }
+    }
+}
 
-
-  }
+fn find_min(mut node: &Box<Node>) -> i32 {
+    while let Some(ref left) = node.left {
+        node = left;
+    }
+    node.val
 }
 
 fn main() {
@@ -103,16 +110,17 @@ fn main() {
 
     println!("Is BST empty after insertion? {}", bst.is_empty());
 
-    println!("Inorder traversal:");
+    println!("Inorder traversal after insertion:");
     BSA::inorder_print(&bst.root);
+    println!();
 
-    println!(); // Add a newline at the end
-
-    let mut ansestor: Vec<i32> = Vec::new();
-    let is_there = BSA::find(&bst.root, &mut ansestor, 44);
-
-    match is_there {
-        Some(val) => println!("the find func return some thing which is {}", val),
-        None => println!("the find func return nono which mean we have problem "),
+    // Now test delete
+    let to_delete = [3, 10, 8]; // delete a node with two children, one child, then root
+    for &val in &to_delete {
+        println!("\nDeleting value: {}", val);
+        bst.delete(val);
+        println!("Inorder traversal after deleting {}:", val);
+        BSA::inorder_print(&bst.root);
+        println!();
     }
 }
