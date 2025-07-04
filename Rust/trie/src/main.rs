@@ -26,25 +26,55 @@ impl Trie {
         }
     }
     fn insert(&mut self, word: String) {
-        let mut current = self.root.as_mut().unwrap();
+        let mut current = self.root.as_mut();
+
+        let mut index = 0;
 
         for c in word.chars() {
-            let index = self.char_to_index(c);
-
-            // Get or insert the child node
-            current = current.child[index]
-                .get_or_insert_with(|| Box::new(Node::new()))
-                .as_mut();
+            index = char_to_index(c);
+            if current.child[index].is_none() {
+                current.child[index] = Some(Box::new(Node::new()));
+            }
+            current = current.child[index].as_mut().unwrap();
         }
-
-        current.is_leaf = true;
     }
 
-    fn char_to_index(&self, c: char) -> usize {
-        (c as u8 - b'a') as usize
+    fn search(&mut self, word: String) -> bool {
+        let mut current = self.root.as_mut();
+        let mut index = 0;
+        for c in word.chars() {
+            index = char_to_index(c);
+            if current.child[index].is_none() {
+                return false;
+            }
+            current = current.child[index].as_mut().unwrap();
+        }
+        return true;
     }
+}
+
+fn char_to_index(c: char) -> usize {
+    (c as u8 - b'a') as usize
 }
 
 fn main() {
     println!("Hello, world!");
+    let mut t1 = Trie::new();
+    t1.insert("hello".to_string());
+    t1.insert("my".to_string());
+    t1.insert("name".to_string());
+    t1.insert("is".to_string());
+    t1.insert("ziad".to_string());
+    let mut res: bool = false;
+
+    res = t1.search("hi".to_string());
+    println!("{}", res);
+    res = t1.search("zizo".to_string());
+    println!("{}", res);
+    res = t1.search("ziad".to_string());
+    println!("{}", res);
+    res = t1.search("hello".to_string());
+    println!("{}", res);
+    res = t1.search("nello".to_string());
+    println!("{}", res);
 }
