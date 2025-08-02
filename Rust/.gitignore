@@ -1,1 +1,17 @@
-LinkedList/rust/target/
+# Rust build output
+**/target/
+
+# IDE/editor files
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+
+# Logs
+*.log
+
+# For libraries only (not binaries)
+Cargo.lock
